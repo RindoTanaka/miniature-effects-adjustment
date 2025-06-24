@@ -10,6 +10,7 @@
   <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css"/>
 
   <style>
@@ -32,6 +33,8 @@
 <body>
 
 <script>
+const subject_id = jsPsych.randomization.randomID(10);
+const filename = `${subject_id}.csv`;
 /*****************************************************
  * 1. 刺激とパラメータの定義
  *****************************************************/
@@ -621,9 +624,7 @@ const main_prefixes = allScenePrefixes.filter(p =>
 /*****************************************************
  * 2. jsPsych 初期化
  *****************************************************/
-const jsPsych = initJsPsych({
-  on_finish:() => jsPsych.data.get().localSave('csv', 'data.csv')
-});
+const jsPsych = initJsPsych();
 
 /*****************************************************
  * 3. シーン定義と試行の準備
@@ -917,8 +918,16 @@ const timeline = [
   ...main_timeline_with_breaks,
   the_end
 ];
-
+const save_data = {Add commentMore actions
+      type: jsPsychPipe,
+      action: "save",
+      experiment_id: "0OEr3EfICc11",
+      filename: filename,
+      data_string: ()=>jsPsych.data.get().csv()
+    };
+  
 jsPsych.run(timeline);
+jsPsych.run([timeline, save_data]);
 //jsPsych.simulate(timeline, "visual");
 </script>
 </body>
