@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>除外付きミニチュア調整実験</title>
+
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.1"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-slider-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css"/>
+
+  <style>
+    body{display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
+    .jspsych-display-element{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;height:100vh;padding-top:2vh;font-size:18px;}
+    #image_display_container{margin:0!important;}
+    #jspsych-html-slider-response-wrapper{margin:0!important;}
+    .instruction-container {max-width: 800px; text-align: left; line-height: 1.8;}
+    
+    .countdown-timer {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+/*****************************************************
+ * 1. 刺激とパラメータの定義
+ *****************************************************/
+// (シーン定義など、変更のない部分は省略しています)
+const tmp_allScenePrefixes = [
+  '8_15_traficjam16',
+  '8_24_bridge42',
+  '8_26_cityscape12',
+  '8_26_mountain6',
+  '8_29_bridge45',
+  '8_33_sea89',
+  '8_36_bridge31',
+  '8_40_bridge37',
+  '8_41_forest8',
+  '8_42_sea74',
+  '8_49_cityscape34',
+  '8_51_sea10',
+  '8_52_bridge11',
+  '8_58_themepark8',
+  '8_67_forest4',
+  '9_25_cityscape54',
+  '9_26_cityscape91',
+  '9_29_sea3',
+  '9_31_sea18',
+  '9_37_bridge6',
+  '9_38_lake5',
+  '9_39_bridge41',
+  '9_41_sea11',
+  '9_50_forest3',
+  '9_52_sea79',
+  '9_59_cityscape105',
+  '10_16_cityscape25',
+  '10_20_bridge48',
+  '10_24_cityscape102',
+  '10_25_bridge49',
+  '10_26_yard18',
+  '10_27_themepark10',
+  '10_29_sea52',
+  '10_36_sea1',
+  '10_38_sea100',
+  '10_40_sea98',
+  '10_46_sea90',
+  '10_47_sea9',
+  '11_19_cityscape32',
+  '11_20_cityscape15',
+  '11_22_cityscape62',
+  '11_26_cityscape14',
+  '11_27_forest16',
+  '11_29_themepark15',
+  '11_30_cityscape37',
+  '11_34_bridge3',
+  '11_36_sea54',
+  '11_37_sea57',
+  '11_40_traficjam3',
+  '11_42_forest12',
+  '11_44_crop14',
+  '11_45_crop17',
+  '11_45_themepark17',
+  '11_46_bridge20',
+  '11_49_cityscape45',
+  '11_54_traficjam22',
+  '11_71_cityscape83',
+  '12_23_cityscape80',
+  '12_25_cityscape113',
+  '12_27_sea59',
+  '12_28_cityscape44',
+  //'12_37_sea54_mini',
+  '12_37_sea60',
+  '12_40_crop10',
+  '12_40_sea42',
+  '12_44_forest11',
+  '12_50_cityscape94',
+  '12_50_sea88',
+  '12_51_lake7',
+  '12_55_sea8',
+  '12_68_sea48',
+  '13_21_cityscape17',
+  '13_25_bridge19',
+  '13_25_traficjam4',
+  '13_27_crop24',
+  '13_27_crop6',
+  '13_27_yard15',
+  '13_29_traficjam2',
+  '13_34_bridge26',
+  '13_34_forest9',
+  '13_37_sea86',
+  '13_41_themepark14',
+  '13_44_lake6',
+  '13_47_bridge35',
+  '13_47_bridge43',
+  '13_50_train',
+  '13_56_sea15',
+  '13_57_cityscape10',
+  '14_25_crop23',
+  '14_26_cityscape75',
+  '14_28_bridge2',
+  '14_34_sea55',
+  '14_36_sea39',
+  '14_37_sea70',
+  '14_38_bridge25',
+  '14_39_sea76',
+  '14_40_bridge18',
+  '14_41_traficjam21',
+  '14_42_bridge23',
+  '14_42_hill1',
+  '14_43_cityscape18',
+  '14_45_themepark2',
+  '14_47_cityscape22',
+  '14_52_sea93',
+  '14_56_cityscape68',
+  '15_17_cityscape48',
+  '15_21_cityscape122',
+  '15_23_cityscape59',
+  '15_24_cityscape30',
+  '15_24_crop26',
+  '15_25_cityscape55',
+  '15_25_crop16',
+  '15_26_cityscape21',
+  '15_26_cityscape64',
+  '15_35_bridge16',
+  '15_35_bridge5',
+  '15_35_sea96',
+  '15_39_sea95',
+  '15_40_forest1',
+  '15_42_sea41',
+  '15_43_forest14',
+  '15_43_sea47',
+  '15_44_themepark19',
+  '15_46_sea37',
+  '15_52_bridge24',
+  '15_53_bridge8',
+  '15_54_crop30',
+  '16_19_cityscape40',
+  '16_24_cityscape65',
+  '16_26_pasture6',
+  '16_28_bridge1',
+  '16_28_crop21',
+  '16_29_forest25',
+  '16_33_lake',
+  '16_36_cityscape73',
+  '16_42_bridge28',
+  '16_42_sea29',
+  '16_50_yard3',
+  '16_51_cityscape13',
+  '16_93_cityscape5',
+  '17_24_cityscape8',
+  '17_25_crop20',
+  '17_31_crop2',
+  '17_32_cityscape2',
+  '17_33_sea38',
+  '17_36_traficjam10',
+  '17_39_yard29',
+  '17_42_sea24',
+  '17_43_sea36',
+  '17_44_sea5',
+  '17_45_sea99',
+  '17_47_cityscape85',
+  '17_48_sea51',
+  '17_51_cityscape35',
+  '17_51_sea6',
+  '17_57_forest15',
+  '17_59_bridge17',
+  '17_66_sea45',
+  '18_19_cityscape11',
+  '18_26_crop15',
+  '18_27_cityscape98',
+  '18_37_themepark11',
+  '18_44_crop9',
+  '18_44_sea85',
+  '18_50_sea27',
+  '18_50_sea91',
+  '18_56_bridge38',
+  '19_25_bridge4',
+  '19_26_bridge33',
+  '19_26_cityscape90',
+  '19_26_sea16',
+  '19_27_mountain2',
+  '19_28_cityscape82',
+  '19_29_crop3',
+  '19_30_cityscape49',
+  '19_31_bridge36',
+  '19_33_cityscape126',
+  '19_33_sea75',
+  '19_35_cityscape100',
+  '19_36_cityscape56',
+  '19_36_forest2',
+  '19_36_themepark5',
+  '19_37_sea78',
+  '19_37_sea97',
+  '19_38_bridge29',
+  '19_38_yard12',
+  '19_43_themepark12',
+  '19_44_yard2',
+  '19_45_sea4',
+  '19_48_cityscape31',
+  '19_48_sea30',
+  '19_48_yard25',
+  '19_48_yard26',
+  '19_49_sea46',
+  '19_50_sea81',
+  '19_56_cityscape119',
+  '19_57_cityscape47',
+  '20_13_cityscape107',
+  '20_30_sea26',
+  '20_32_crop13',
+  '20_38_bridge44',
+  '20_43_themepark16',
+  '20_45_bridge46',
+  '20_45_lake10',
+  '20_47_sea64',
+  '20_48_forest7',
+  '20_49_cityscape63',
+  '20_50_cityscape96',
+  '20_54_yard9',
+  '20_58_cityscape70',
+  '20_61_lake4',
+  '21_20_cityscape115',
+  '21_25_mountain3',
+  '21_30_cityscape103',
+  '21_30_traficjam13',
+  '21_33_yard17',
+  '21_38_cityscape60',
+  '21_38_yard23',
+  '21_42_forest6',
+  '21_43_sea68',
+  '21_48_bridge39',
+  '21_48_themepark1',
+  '21_49_cityscape57',
+  '21_53_yard6',
+  '21_54_sea83',
+  '21_55_crop18',
+  '21_69_cityscape110',
+  '22_24_cityscape74',
+  '22_27_crop29',
+  '22_36_bridge9',
+  '22_37_cityscape93',
+  '22_37_sea56',
+  '22_39_yard5',
+  '22_40_forest13',
+  '22_41_sea50',
+  '22_42_pasture7',
+  '22_50_cityscape',
+  '22_53_cityscape95',
+  '22_53_crop4',
+  '23_25_sea73',
+  '23_26_pasture4',
+  '23_33_sea25',
+  '23_37_sea80',
+  '23_41_cityscape16',
+  '23_42_bridge15',
+  '23_43_themepark7',
+  '23_53_sea49',
+  '23_57_yard4',
+  '23_59_cityscape106',
+  '24_17_cityscape53',
+  '24_29_cityscape71',
+  '24_31_sea53',
+  '24_32_cityscape50',
+  '24_32_pasture2',
+  '24_37_crop25',
+  '24_38_cityscape97',
+  '24_39_sea82',
+  '24_46_cityscape118',
+  '24_51_sea67',
+  '24_66_bridge12',
+  '24_68_sea2',
+  '25_29_traficjam5',
+  '25_30_cityscape87',
+  '25_36_bridge30',
+  '25_37_bridge50',
+  '25_37_crop5',
+  '25_38_sea94',
+  '25_42_crop1',
+  '25_43_bridge21',
+  '25_43_crop7',
+  '25_44_cityscape69',
+  '25_48_sea28',
+  '25_50_cityscape66',
+  '25_50_cityscape84',
+  '25_53_bridge34',
+  '25_56_yard14',
+  '25_60_cityscape81',
+  '26_23_traficjam18',
+  '26_33_themepark4',
+  '26_36_sea71',
+  '26_43_cityscape114',
+  '26_43_cityscape29',
+  '26_46_cityscape108',
+  '26_46_cityscape7',
+  '26_46_sea40',
+  '26_48_cityscape6',
+  '26_48_crop27',
+  '26_48_pasture8',
+  '26_49_sea21',
+  '26_55_cityscape19',
+  '27_17_cityscape88',
+  '27_30_crop11',
+  '27_45_bridge40',
+  '27_45_crop22',
+  '27_45_yard',
+  '27_55_bridge13',
+  '27_56_cityscape58',
+  '27_57_themepark18',
+  '27_68_sea66',
+  '28_34_lake3',
+  '28_39_crop28',
+  '28_39_forest23',
+  '28_41_lake9',
+  '28_42_traficjam17',
+  '28_43_sea23',
+  '28_44_sea7',
+  '28_45_bridge14',
+  '28_46_sea33',
+  '28_50_forest20',
+  '29_31_cityscape67',
+  '29_31_sea12',
+  '29_41_traficjam7',
+  '29_43_cityscape41',
+  '29_44_traficjam9',
+  '29_46_pasture10',
+  '29_46_yard24',
+  '29_47_cityscape4',
+  '29_50_cityscape112',
+  '29_53_sea61',
+  '29_57_lake8',
+  '29_60_forest5',
+  '30_33_crop12',
+  '30_37_crop19',
+  '30_37_sea84',
+  '30_46_lake2',
+  '30_49_cityscape52',
+  '30_50_cityscape39',
+  '30_51_sea87',
+  '30_51_traficjam8',
+  '30_54_bridge22',
+  '30_55_sea19',
+  '30_56_cityscape104',
+  '31_23_cityscape117',
+  '31_26_pasture5',
+  '31_32_cityscape24',
+  '31_33_cityscape33',
+  '31_39_yard13',
+  '31_42_sea65',
+  '31_45_cityscape120',
+  '31_49_sea44',
+  '31_52_traficjam1',
+  //'31_59_sea77mini',
+  '31_66_sea69',
+  '32_35_cityscape123',
+  '32_41_cityscape121',
+  '32_42_yard8',
+  '32_47_cityscape86',
+  '32_51_mountain1',
+  '32_53_cityscape72',
+  '32_58_yard22',
+  '32_60_sea77',
+  '33_44_sea35',
+  '33_51_forest19mini',
+  '33_62_sea20',
+  '34_28_cityscape99',
+  '34_31_traficjam6',
+  '34_37_cityscape79',
+  '34_39_yard20',
+  '34_39_yard28',
+  '34_43_traficjam12',
+  '34_44_themepark13',
+  '34_45_cityscape61',
+  '34_49_cityscape3',
+  '34_51_forest17',
+  '34_52_sea13',
+  '34_55_cityscape111',
+  '34_71_sea58',
+  '35_28_cityscape9',
+  '35_30_pasture3',
+  '35_38_mountain5',
+  '35_40_cityscape78',
+  '35_40_traficjam14',
+  '35_40_yard30',
+  '35_42_sea72',
+  '35_42_yard21',
+  '35_47_themepark9',
+  '35_47_yard16',
+  '35_53_crop8',
+  '35_55_sea32',
+  '35_60_sea22',
+  '35_64_bridge7',
+  '36_31_cityscape124',
+  '36_32_cityscape76',
+  '36_32_pasture',
+  '36_37_bridge10',
+  '36_48_traficjam15',
+  '36_50_cityscape77',
+  '36_53_forest24',
+  '37_26_cityscape116',
+  '37_37_yard7',
+  '37_41_bridge32',
+  '37_49_mountain4',
+  '37_55_cityscape89',
+  '37_58_cityscape43',
+  '38_29_traficjam11',
+  '38_36_sea34',
+  '38_45_cityscape109',
+  '38_56_cityscape36',
+  '38_60_sea43',
+  '38_80_sea92',
+  '39_33_forest21',
+  '39_36_themepark6',
+  '39_44_pasture9',
+  '39_45_yard11',
+  '39_47_cityscape23',
+  '39_47_cityscape27',
+  '39_49_forest10',
+  '39_61_cityscape92',
+  '40_42_sea17',
+  '40_47_bridge27',
+  '40_49_sea62',
+  '40_52_cityscape51',
+  '40_53_yard19',
+  '40_55_forest22',
+  '41_33_sea63',
+  '41_52_cityscape101',
+  '41_60_cityscape20',
+  '41_62_cityscape46',
+  '41_68_sea14',
+  '42_29_yard10',
+  '42_46_cityscape26',
+  '42_48_yard27',
+  '42_52_themepark3',
+  '42_56_cityscape38',
+  '43_28_bridge47',
+  '44_40_sea31',
+  '44_66_cityscape42',
+  '46_49_cityscape28',
+  '9_31_sea11',
+  '13_37_bridge11',
+  '15_45_sea10',
+  '20_28_themepark15',
+  '21_37_themepark8',
+  '22_31_sea79',
+  '22_42_sea73',
+  '24_43_bridge37',
+  '28_38_bridge6',
+  '30_42_themepark2',
+  '31_50_sea9',
+  '40_48_bridge45',
+  //ここから新しい画像追加
+  "7_22_bridge51",
+"8_23_cityscape140",
+"8_33_sea101",
+"9_36_sea148",
+"10_33_sea121",
+"10_35_sea149",
+"11_39_bridge53",
+//"11_43_sea123",
+"13_31_sea135",
+"13_36_sea119",
+"13_43_cityscape149",
+"14_22_sea105",
+"14_24_sea118",
+"14_28_cityscape158",
+"14_41_traficjam25",
+"14_47_sea133",
+"15_35_sea150",
+"15_38_traficjam23",
+"16_30_sea110",
+"16_41_cityscape165",
+"16_51_sea123",
+"17_24_sea114",
+"17_24_sea115",
+"17_24_traficjam30",
+"17_30_traficjam19",
+"17_42_sea147",
+"17_43_cityscape147",
+"17_47_cityscape148",
+"17_53_sea134",
+"18_25_cityscape170",
+"19_25_sea125",
+"19_39_cityscape146",
+"19_39_cityscape152",
+"19_49_cityscape134",
+"20_26_sea126",
+"20_34_cityscape143",
+"20_36_sea103",
+"21_25_cityscape141",
+"21_28_sea137",
+"22_30_sea111",
+"22_30_sea136",
+"22_37_cityscape133",
+"22_37_cityscape151",
+"22_51_cityscape144",
+"22_64_sea139",
+"23_20_traficjam28",
+"24_29_cityscape125",
+"24_39_sea141",
+"24_44_cityscape153",
+"24_51_cityscape135",
+"24_58_cityscape138",
+"25_33_cityscape167",
+"25_51_sea153",
+"25_54_sea104",
+"25_60_sea108",
+"26_18_cityscape159",
+"26_27_traficjam31",
+"26_28_sea128",
+"26_32_sea132",
+"26_36_cityscape168",
+"26_44_cityscape150",
+"26_47_cityscape155",
+"26_47_sea143",
+"26_49_sea146",
+"26_59_sea142",
+"27_34_traficjam29",
+"27_51_cityscape145",
+"28_29_sea112",
+"28_30_pasture11",
+"28_53_sea155",
+"29_44_sea138",
+"29_46_cityscape157",
+"29_51_cityscape142",
+"29_52_cityscape156",
+"30_36_sea127",
+"30_41_sea154",
+"30_42_cityscape126",
+"31_27_cityscape160",
+"31_28_cityscape127",
+"31_45_sea145",
+"31_51_sea120",
+"32_30_cityscape161",
+"32_30_sea109",
+"32_33_traficjam20",
+"32_39_sea156",
+"32_60_traficjam27",
+"33_31_sea131",
+"33_50_cityscape132",
+"34_21_cityscape128",
+"34_36_cityscape162",
+"34_38_cityscape169",
+"34_39_cityscape151",
+"34_39_sea129",
+"35_37_cityscape136",
+"35_38_cityscape164",
+"35_61_sea140",
+"36_32_cityscape154",
+"36_44_cityscape129",
+"37_38_cityscape131",
+"37_44_sea102",
+"38_40_cityscape130",
+"38_48_cityscape139",
+"38_48_cityscape166",
+"38_59_sea152",
+"39_67_cityscape163",
+"40_39_cityscape172",
+"40_43_cityscape171",
+"40_44_traficjam24",
+"41_40_sea160",
+"42_47_sea151"
+];
+
+
+//除外試行
+const exit_allScenePrefixes = [
+    '37_49_mountain4', '12_50_cityscape94', '18_19_cityscape11', '22_36_bridge9', '15_54_crop30', '9_59_cityscape105', '19_57_cityscape47', '15_52_bridge24', '40_52_cityscape51', '21_53_yard6', '18_50_sea27', '17_43_sea36', '15_26_cityscape21', '9_37_bridge6', '9_38_lake5', '27_57_themepark18', '9_50_forest3', '10_36_sea1', '21_25_mountain3', '9_52_sea79', '11_45_themepark17', '13_25_traficjam4', '10_40_sea98', '11_54_traficjam22', '25_37_crop5', '19_48_yard26', '16_28_crop21', '16_51_cityscape13', '10_47_sea9', '8_40_bridge37', '13_37_bridge11', '24_51_sea67', '17_66_sea45', '9_39_bridge41', '29_60_forest5', '11_45_crop17', '13_50_train', '15_43_sea47', '12_51_lake7', '17_31_crop2', '17_25_crop20', '16_50_yard3', '8_51_sea10', '13_57_cityscape10', '27_45_crop22', '14_52_sea93', '11_40_traficjam3', '15_25_crop16', '20_32_crop13', '19_48_cityscape31', '25_56_yard14', '11_46_bridge20', '8_58_themepark8', '17_57_forest15', '19_48_sea30', '15_40_forest1', '14_42_hill1', '12_44_forest11', '29_57_lake8', '29_47_cityscape4', '21_69_cityscape110', '43_28_bridge47', '21_55_crop18', '22_53_crop4', '9_41_sea11', '22_37_sea56', '12_37_sea60', '13_56_sea15', '13_47_bridge35', '13_44_lake6', '25_38_sea94', '37_58_cityscape43', '10_25_bridge49', '11_26_cityscape14', '19_36_forest2', '13_34_forest9', '19_36_themepark5', '18_50_sea91', '31_66_sea69', '8_41_forest8', '12_40_sea42', '14_41_traficjam21', '28_41_lake9', '23_57_yard4', '8_26_cityscape12', '23_41_cityscape16', '33_51_forest19mini', '13_37_sea86', '15_43_forest14', '15_53_bridge8', '16_28_bridge1', '19_36_cityscape56', '14_47_cityscape22', '10_46_sea90', '17_51_cityscape35', '14_43_cityscape18', '32_42_yard8', '8_52_bridge11', '20_47_sea64', '11_49_cityscape45', '24_68_sea2', '16_42_bridge28', '15_45_sea10', '19_27_mountain2', '20_61_lake4', '17_59_bridge17', '17_24_cityscape8', '28_42_traficjam17', '11_29_themepark15', '44_66_cityscape42', '26_55_cityscape19', '14_37_sea70', '12_68_sea48', '27_30_crop11', '18_44_crop9', '25_37_bridge50', '9_31_sea18', '37_41_bridge32', '25_48_sea28', '19_44_yard2', '8_26_mountain6', '8_67_forest4', '8_29_bridge45', '17_39_yard29', '12_27_sea59', '25_43_bridge21', '32_47_cityscape86', '12_50_sea88', '15_46_sea37', '14_28_bridge2', '11_71_cityscape83', '35_53_crop8', '16_93_cityscape5', '19_48_yard25', '23_42_bridge15', '41_52_cityscape101', '10_27_themepark10', '23_25_sea73', '8_24_bridge42', '14_56_cityscape68', '14_45_themepark2', '11_27_forest16', '19_43_themepark12', '8_36_bridge31', '35_64_bridge7', '42_56_cityscape38', '20_45_lake10', '8_49_cityscape34', '11_34_bridge3', '18_56_bridge38', '13_47_bridge43', '11_44_crop14', '42_46_cityscape26', '38_80_sea92', '19_29_crop3', '24_66_bridge12' 
+];
+
+
+// 1. 除外リストをSetに変換して、検索を高速化します。
+const exitSet = new Set(exit_allScenePrefixes);
+
+// 2. filterメソッドで、tmp_allScenePrefixesの各要素をチェックします。
+//    Setに存在しない（!exitSet.has(prefix)）要素だけを残します。
+const allScenePrefixes = tmp_allScenePrefixes.filter(prefix => !exitSet.has(prefix));
+
+
+
+
+
+const practice_prefixes = [
+    '15_26_cityscape64',
+    '20_50_cityscape96',
+    '36_32_cityscape76'
+];
+const sceneNameFromPrefix = p => p.split('_').slice(2).join('_');
+const main_prefixes = allScenePrefixes.filter(p =>
+  !practice_prefixes.includes(p)
+);
+
+/*****************************************************
+ * 2. jsPsych 初期化
+ *****************************************************/
+const jsPsych = initJsPsych({
+  on_finish:() => jsPsych.data.get().localSave('csv', 'data.csv')
+});
+
+/*****************************************************
+ * 3. シーン定義と試行の準備
+ *****************************************************/
+const imgFolder       = 'experiment_img_GPU_final2/';
+const minDist         = 5;
+const maxDist         = 60;
+const viewDistCm      = 57.3;
+const monitorPPI      = 93.95;
+const targetAngle     = 16;
+
+function makeSceneObject(pref){
+  const [pitch,vfov,...rest] = pref.split('_');
+  const sceneName = rest.join('_');
+  const images = [];
+  for(let d = minDist; d <= maxDist; d++){
+    images.push({distance:d, path:`${imgFolder}${pitch}_${vfov}_${d}_${sceneName}.jpg`});
+  }
+  return {pitch:+pitch, vfov:+vfov, scene:sceneName, images};
+}
+
+const practice_scenes = practice_prefixes.map(makeSceneObject);
+const main_scenes     = main_prefixes.map(makeSceneObject);
+
+let timerInterval = null; 
+
+// ★★★ 試行ブロックの生成関数を全面的に修正 ★★★
+function makeTrialBlock(meta, phase){
+  const randomStart = Math.floor(Math.random() * (maxDist - minDist + 1)) + minDist;
+  
+  const preloadTrial = {
+    type: jsPsychPreload,
+    images: meta.images.map(i => i.path),
+    message: '<p>画像を読み込み中…</p>',
+    error_message: '<p style="color:red;">読み込み失敗</p>'
+  };
+
+  const sliderTrial = {
+    type: jsPsychHtmlSliderResponse,
+    stimulus: () => {
+      const initPath = meta.images[randomStart - minDist].path;
+      return `<div id="image_display_container"><img id="adjustable_image" src="${initPath}" style="height:${imageHeightPx}px;display:block;margin:0 auto;"></div>`;
+    },
+    // ★ プロンプトにスペースキーでの除外について追記
+    prompt: `
+        <p>スライダーでそのシーンが最もミニチュアに見える画像を選択し、「これで決定」ボタンを押してください。</p>
+        <p style="color: dimgray;">（ミニチュアに見えないと感じた場合は、<b>スペースキー</b>を押してこの試行を除外できます）</p>
+    `,
+    min: minDist, max: maxDist, step: 1, slider_start: randomStart, require_movement: true, button_label: 'これで決定',
+    trial_duration: 15000,
+    
+    // ★ on_loadでキーボードイベントの監視を開始
+    on_load: () => {
+        // スペースキーが押されたときの処理を定義
+        const handleKeyDown = (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // デフォルト動作（スクロールなど）を防止
+                // on_finishに「スペースで除外された」情報を渡して、試行を即時終了
+                jsPsych.finishTrial({ is_excluded_by_space: true });
+            }
+        };
+        // イベントリスナーを登録
+        document.addEventListener('keydown', handleKeyDown);
+
+        // on_finishでリスナーを削除するために、試行オブジェクト自体にリスナー関数を保存
+        jsPsych.getCurrentTrial().custom_data = {
+            keydown_listener: handleKeyDown
+        };
+
+        // --- カウントダウンタイマーの処理（変更なし） ---
+        let timeLeft = 15;
+        const displayElement = document.querySelector('.jspsych-display-element');
+        const timerElement = document.createElement('div');
+        timerElement.className = 'countdown-timer';
+        timerElement.textContent = `残り時間: ${timeLeft}`;
+        displayElement.appendChild(timerElement);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timerElement) timerElement.textContent = `残り時間: ${timeLeft}`;
+            if (timeLeft <= 0) clearInterval(timerInterval);
+        }, 1000);
+
+        // --- スライダー、ホイール操作の処理（変更なし） ---
+        const slider = document.getElementById('jspsych-html-slider-response-response');
+        const img    = document.getElementById('adjustable_image');
+        slider.addEventListener('input', () => { img.src = meta.images[slider.value - minDist].path; });
+        displayElement.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            let currentValue = Number(slider.value);
+            const step = Number(slider.step);
+            if (event.deltaY < 0) { currentValue += step; } else { currentValue -= step; }
+            const min = Number(slider.min);
+            const max = Number(slider.max);
+            currentValue = Math.max(min, Math.min(max, currentValue));
+            slider.value = currentValue;
+            slider.dispatchEvent(new Event('input', { bubbles: true }));
+            slider.dispatchEvent(new Event('change', { bubbles: true }));
+        }, { passive: false });
+        setTimeout(() => {
+            const w = img.clientWidth;
+            const wrap = document.getElementById('jspsych-html-slider-response-wrapper');
+            if(wrap) wrap.style.width = `${w}px`;
+        }, 50);
+    },
+
+    // ★ on_finishでイベントリスナーの削除とデータ記録
+    on_finish: data => {
+      // on_loadで登録したイベントリスナーを必ず削除する
+      const listener = jsPsych.getCurrentTrial().custom_data?.keydown_listener;
+      if (listener) {
+          document.removeEventListener('keydown', listener);
+      }
+
+      // タイマーの後処理
+      clearInterval(timerInterval);
+      const timerElement = document.querySelector('.countdown-timer');
+      if (timerElement) { timerElement.remove(); }
+
+      // 試行の終了仕方を判定
+      const was_excluded = data.is_excluded_by_space === true;
+      const was_skipped = data.rt === null && !was_excluded; // タイムアウトしたが、スペースキーは押されていない
+
+      // データを記録
+      Object.assign(data, {
+        phase, 
+        task:'miniature_adjust', 
+        selected_distance_cm: (!was_excluded && !was_skipped) ? +data.response : null, 
+        skipped: was_skipped,         // タイムアウトによるスキップ
+        is_excluded: was_excluded,    // スペースキーによる除外
+        pitch_deg:meta.pitch, 
+        vfov_deg:meta.vfov, 
+        scene:meta.scene
+      });
+      meta.images.length = 0; // メモリ解放
+    }
+  };
+
+  return {timeline:[preloadTrial, sliderTrial]};
+}
+
+/*****************************************************
+ * 4. 視角→px 変換
+ *****************************************************/
+const imgHpx = (d, ppi, a) => Math.round(2 * d * Math.tan(a * Math.PI / 360) * (ppi / 2.54));
+const imageHeightPx = imgHpx(viewDistCm, monitorPPI, targetAngle);
+
+/*****************************************************
+ * 5. 教示画面など
+ *****************************************************/
+// ★★★ 教示文を修正 ★★★
+const instruction_practice = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="instruction-container">
+      <p><b>練習試行です</b></p>
+      <p>これから実験の練習を始めます。</p>
+      <p>画面にシーンの画像が表示されます。スライダーを左右に動かすと、画像のぼけ方が変化します。</p>
+      <p>スライダーの操作はマウスで直接動かすこともできますし、ホイールの部分を操作することによっても調整できます。</p>
+      <p>あなたが<b>最もそのシーン空間を「ミニチュアのように見える」</b>と感じるぼけ具合に調整してください。</p>
+      <p>もし、どうしてもミニチュアに見えないと感じた場合は、調整中にいつでも<b>【スペースキー】</b>を押してください。その試行はスキップされ、すぐに次の試行に進みます。</p>
+      <p>各画像の調整時間には<b>15秒</b>の上限があります。15秒以内に調整を終えられなかった場合も、その試行は自動的にスキップされます。</p>
+      <p>練習は${practice_prefixes.length}回です。</p>
+      <br>
+      <p>準備ができたら、<b>Enterキー</b>を押して練習を開始してください。</p>
+    </div>
+  `,
+  choices: ['Enter']
+};
+
+const practice_finished = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="instruction-container">
+      <p>練習はこれで終了です。</p>
+      <p>Enterキーを押して次に進んでください</p>       
+    </div>
+  `,
+  choices: ['Enter']
+};
+
+const proceed_to_main = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="instruction-container" style="text-align: center;">
+            <p>次のブロックより本試行を行います。</p>
+            <p>Enterキーを押して本試行の説明に移ってください</p>
+    </div>
+  `,
+  choices: ['Enter']
+};
+
+// ★★★ 教示文を修正 ★★★
+// ★★★ 教示文を修正 ★★★
+const instruction_main = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: () => {
+    // 60試行ずつにした場合、何ブロックになるかと、最後のブロックの試行数を計算
+    const total_trials = main_prefixes.length;
+    const trials_per_block = 60;
+    const num_blocks = Math.ceil(total_trials / trials_per_block);
+    const last_block_trials = total_trials % trials_per_block === 0 ? trials_per_block : total_trials % trials_per_block;
+
+    // 表示用のテキストを作成
+    let block_info_text = "";
+    if (num_blocks > 1) {
+        block_info_text = `<p>（第1〜${num_blocks - 1}ブロック: ${trials_per_block}試行, 最終ブロック: ${last_block_trials}試行）</p>`;
+    } else {
+        block_info_text = `<p>（全${total_trials}試行）</p>`;
+    }
+
+    return `
+    <div class="instruction-container">
+      <p><b>本試行</b></p>
+      <p>これから本番の実験を開始します。手順は練習と同じです。</p>
+      <p><b>最もそのシーン空間が「ミニチュアのように見える」</b>と感じるぼけ具合に調整してください。</p>
+      <p>スライダーの操作はマウスで直接動かすこともできますし、ホイールの部分を操作することによっても調整できます。</p>
+      <p>もし、どうしてもミニチュアに見えないと感じた場合は、調整中にいつでも<b>【スペースキー】</b>を押してください。その試行はスキップされ、すぐに次の試行に進みます。</p>
+      <p>各画像の調整時間には<b>15秒</b>の上限があります。15秒以内に調整を終えられなかった場合も、その試行は自動的にスキップされます。</p>
+      <p>本試行は合計${total_trials}枚の画像で、<b>${num_blocks}つのブロック</b>に分かれています。</p>
+      ${block_info_text}
+      <p>各ブロックの間に休憩があります。適宜休憩していただいて構いません</p>
+      <br>
+      <p>準備ができたら、<b>Enterキー</b>を押して最初のブロックを開始してください。</p>
+    </div>
+  `;
+  },
+  choices: ['Enter']
+};
+
+// (以降のコードは変更ありません)
+function create_break_trial(current_block, total_blocks) {
+  return {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `
+      <div class="instruction-container">
+        <p>ブロック <b>${current_block} / ${total_blocks}</b> が終了しました。</p>
+        <p>適宜休憩をお取りください。</p>
+        <br>
+        <p>準備ができましたら、<b>Enterキー</b>を押して次のブロックを開始してください。</p>
+      </div>
+    `,
+    choices: ['Enter']
+  };
+}
+
+const the_end = {
+  type: jsPsychHtmlKeyboardResponse,
+  choices: "NO_KEYS",
+  trial_duration: 5000,
+  stimulus:`
+    <div class="instruction-container">
+      <p>実験はすべて終了です。</p>
+      <p>ご協力いただき、誠にありがとうございました。</p>
+      <pしばらくするとcsvファイルが出力されます。それまでブラウザを閉じないでください。</p>
+      <p>その後、出力されるcsvファイルを保存してください</p>
+    </div>
+  `
+};
+
+const practice_trials = jsPsych.randomization.shuffle(practice_scenes).map(s => makeTrialBlock(s, 'practice'));
+const main_trials     = jsPsych.randomization.shuffle(main_scenes).map(s => makeTrialBlock(s, 'main'));
+
+const main_timeline_with_breaks = [];
+let block_number = 1;
+// 本試行の総数と、1ブロックあたりの試行数（50）から総ブロック数を計算
+// Math.ceil を使うことで、端数が出た場合もブロック数を正しく設定できます。
+const trials_per_block = 60;
+const total_blocks = Math.ceil(main_trials.length / trials_per_block);
+
+for (let i = 0; i < main_trials.length; i++) {
+  main_timeline_with_breaks.push(main_trials[i]);
+  const trial_number = i + 1;
+
+  // 最後の試行でない、かつ50の倍数の試行の場合に休憩を挿入
+  if (trial_number % trials_per_block === 0 && trial_number < main_trials.length) {
+    main_timeline_with_breaks.push(create_break_trial(block_number, total_blocks));
+    block_number++;
+  }
+}
+// 最終ブロック終了後の休憩は不要なので、ループの外で最終ブロックのカウントアップは行いません。
+// もし最終ブロックの後にも「全試行終了」というメッセージの前に休憩を入れたい場合は、
+// そのロジックを別途追加する必要があります。
+
+const timeline = [
+  {type:jsPsychFullscreen, fullscreen_mode:true, message:'<p>これから実験を開始します。下のボタンを押して、画面をフルスクリーンにしてください。</p>', button_label:'フルスクリーンにする'},
+  instruction_practice,
+  ...practice_trials,
+  practice_finished,
+  proceed_to_main,
+  instruction_main,
+  ...main_timeline_with_breaks,
+  the_end
+];
+
+jsPsych.run(timeline);
+//jsPsych.simulate(timeline, "visual");
+</script>
+</body>
+</html>
